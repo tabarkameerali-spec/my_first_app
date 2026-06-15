@@ -1,22 +1,25 @@
 workflows:
-  default-workflow:
-    name: Build Android and iOS
+  ios-build:
+    name: Build iOS App
     environment:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Clean and Setup
+      - name: Clean and Recreate iOS Structure
         script: |
           flutter clean
           flutter pub get
-      - name: Generate iOS files
-        script: |
-          # إجبار Flutter على إعادة إنشاء هيكلية iOS
+          # هذا الأمر يضمن إعادة إنشاء ملفات Xcode بشكل سليم
           flutter create .
-      - name: Build iOS
+      - name: Install Pods
         script: |
           cd ios
-          # تثبيت المكتبات (سيقوم تلقائياً بإنشاء ملف Podfile إذا كان مفقوداً)
           pod install
           cd ..
-          flutter build ipa --release --no-codesign --scheme="Runner"
+      - name: Build IPA
+        script: |
+          flutter build ipa --release --no-codesign \
+            --xcode-project="ios/Runner.xcodeproj" \
+            --scheme="Runner"
+    artifacts:
+      - build/ios/ipa/*.ipa
