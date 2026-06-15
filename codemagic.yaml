@@ -5,5 +5,8 @@ scripts:
         script: flutter build apk --release
       - name: Build iOS
         script: |
-          # نلغي أي محاولة لجلب الشهادات ونبني مباشرة
-          flutter build ipa --release --no-codesign
+          cd ios
+          # هذه الخطوة مهمة جداً لإنشاء ملفات الـ Scheme المفقودة
+          pod install
+          cd ..
+          flutter build ipa --release --no-codesign --export-options-plist=ios/ExportOptions.plist
