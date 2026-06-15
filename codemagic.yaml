@@ -1,12 +1,22 @@
-scripts:
-      - name: Get Flutter packages
-        script: flutter pub get
-      - name: Build Android
-        script: flutter build apk --release
+workflows:
+  default-workflow:
+    name: Build Android and iOS
+    environment:
+      flutter: stable
+      xcode: latest
+    scripts:
+      - name: Clean and Setup
+        script: |
+          flutter clean
+          flutter pub get
+      - name: Generate iOS files
+        script: |
+          # إجبار Flutter على إعادة إنشاء هيكلية iOS
+          flutter create .
       - name: Build iOS
         script: |
           cd ios
-          # هذه الخطوة مهمة جداً لإنشاء ملفات الـ Scheme المفقودة
+          # تثبيت المكتبات (سيقوم تلقائياً بإنشاء ملف Podfile إذا كان مفقوداً)
           pod install
           cd ..
-          flutter build ipa --release --no-codesign --export-options-plist=ios/ExportOptions.plist
+          flutter build ipa --release --no-codesign --scheme="Runner"
