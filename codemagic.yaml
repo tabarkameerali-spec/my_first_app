@@ -12,10 +12,13 @@ workflows:
         script: flutter build apk --release
       - name: Build iOS
         script: |
-          flutter build ipa --release \
-            --xcode-project="ios/Runner.xcodeproj" \
-            --scheme="Runner" \
-            --export-options-plist=ios/ExportOptions.plist
+          # نتحقق من وجود الملف قبل البناء للتأكد
+          if [ -d "ios" ]; then
+            cd ios
+            pod install
+            cd ..
+          fi
+          flutter build ipa --release --no-codesign
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
       - build/ios/ipa/*.ipa
