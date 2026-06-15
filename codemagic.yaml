@@ -1,40 +1,31 @@
 workflows:
   ios-workflow:
     name: iOS Workflow
-    instance_type: mac_min_m1  # تم تصحيح الخطأ الإملائي
+    instance_type: mac_min_m1
     environment:
       flutter: stable
       xcode: latest
     scripts:
       - name: "Set up and clean iOS project"
         script: |
-          echo "=== تنظيف وإعداد مجلد iOS ==="
+          echo "Setting up iOS folder"
           cd ios
           rm -rf Pods Podfile.lock Runner.xcworkspace
-          # إنشاء Podfile إذا لم يكن موجوداً
           if [ ! -f "Podfile" ]; then
-            echo "Podfile غير موجود، جاري إنشاؤه..."
             pod init
           fi
           cd ..
           flutter clean
           flutter pub get
-          echo "=== تم الانتهاء من التنظيف والإعداد ==="
-      
       - name: "Install CocoaPods dependencies"
         script: |
-          echo "=== تثبيت Pods ==="
+          echo "Installing Pods"
           cd ios
           pod install --repo-update
           cd ..
-          echo "=== تم تثبيت Pods بنجاح ==="
-      
       - name: "Build iOS app"
         script: |
-          echo "=== بدء بناء تطبيق iOS ==="
+          echo "Building iOS app"
           flutter build ios --release --no-codesign
-          echo "=== اكتمل البناء بنجاح ==="
-    
     artifacts:
       - build/ios/ipa/*.ipa
-      - build/ios/iphoneos/*.app.dSYM.zip
