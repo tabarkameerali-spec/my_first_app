@@ -1,16 +1,9 @@
-workflows:
-  default-workflow:
-    name: Build Android and iOS
-    environment:
-      flutter: stable
-      xcode: latest
-    scripts:
+scripts:
       - name: Get Flutter packages
         script: flutter pub get
       - name: Build Android
         script: flutter build apk --release
       - name: Build iOS
         script: |
-          flutter build ipa --release --no-codesign \
-            --xcode-project="ios/Runner.xcodeproj" \
-            --scheme="Runner"
+          # نلغي أي محاولة لجلب الشهادات ونبني مباشرة
+          flutter build ipa --release --no-codesign
