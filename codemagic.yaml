@@ -4,6 +4,7 @@ workflows:
     max_build_duration: 60
     environment:
       flutter: stable
+      xcode: latest
     scripts:
       - name: Get Flutter packages
         script: flutter pub get
@@ -11,7 +12,10 @@ workflows:
         script: flutter build apk --release
       - name: Build iOS
         script: |
-          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+          flutter build ipa --release \
+            --xcode-project="ios/Runner.xcodeproj" \
+            --scheme="Runner" \
+            --export-options-plist=ios/ExportOptions.plist
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
       - build/ios/ipa/*.ipa
