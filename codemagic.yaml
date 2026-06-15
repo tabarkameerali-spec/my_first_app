@@ -1,7 +1,6 @@
 workflows:
   default-workflow:
     name: Build Android and iOS
-    max_build_duration: 60
     environment:
       flutter: stable
       xcode: latest
@@ -11,14 +10,4 @@ workflows:
       - name: Build Android
         script: flutter build apk --release
       - name: Build iOS
-        script: |
-          # الانتقال لمجلد ios والتأكد من وجود الملفات
-          cd ios
-          pod install
-          # العودة للمجلد الرئيسي
-          cd ..
-          # بناء المشروع مع تحديد المسار يدوياً
-          flutter build ipa --release --no-codesign --export-options-plist=ios/ExportOptions.plist
-    artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
-      - build/ios/ipa/*.ipa
+        script: flutter build ipa --release --no-codesign
