@@ -1,29 +1,22 @@
 workflows:
   ios-signing-workflow:
     name: Build Signed iOS App
-    max_build_duration: 60
     environment:
       flutter: stable
       xcode: latest
-      # هنا تأكد من استدعاء مجموعة المتغيرات التي أنشأتها في Codemagic
       groups:
         - apple_credentials
     scripts:
       - name: Initialize Keychain
         script: keychain initialize
-      - name: Sync Profiles and Certificates
+      - name: Fetch and Install Signing Files
         script: |
-          # هذا الأمر سيقوم بجلب الشهادات وملفات التعريف أوتوماتيكياً
-          xcode-project use-profiles
+          # هذا السطر سيجلب الشهادات التي أنشأتها عبر الـ API ويضعها في المجلد الصحيح
+          app-store-connect fetch-signing-files "com.tabark.myfirstapp" --type IOS_APP_STORE
+          keychain add-certificates
       - name: Build IPA
         script: |
-          # نستخدم الملف الذي رفعته إلى المستودع
+          # نستخدم --codesign-identity لضمان أن Flutter يعرف أي شهادة يستخدم
           flutter build ipa --release --export-options-plist=export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
-      # اختياري: يمكنك إضافة هذا الجزء إذا كنت تريد رفع التطبيق مباشرة لـ TestFlight
-      app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
