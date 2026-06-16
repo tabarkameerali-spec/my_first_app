@@ -8,7 +8,7 @@ workflows:
       - name: Set up code signing
         script: |
           # هذا الأمر يقوم بجلب الملفات التي أنشأها Codemagic أوتوماتيكياً
-          app-store-connect fetch-signing-files "YOUR_BUNDLE_ID" --type IOS_APP_STORE
+          app-store-connect fetch-signing-files "com.tabark.myfirstapp" --type IOS_APP_STORE
           keychain add-certificates
       - name: Build IPA
         script: |
