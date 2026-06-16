@@ -4,18 +4,13 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      groups:
-        - apple_credentials
     scripts:
       - name: Initialize Keychain
+        script: keychain initialize
+      - name: Sync Profiles and Certificates
         script: |
-          keychain initialize
-      - name: Fetch and Install Signing Files
-        script: |
-          app-store-connect fetch-signing-files "com.tabark.myfirstapp" \
-            --type IOS_APP_STORE \
-            --create
-          keychain add-certificates
+          # هذا الأمر يبحث عن الشهادات التي أنشأتها عبر الـ API ويقوم بتركيبها تلقائياً
+          xcode-project use-profiles
       - name: Build IPA
         script: |
           flutter build ipa --release --export-options-plist=export_options.plist
