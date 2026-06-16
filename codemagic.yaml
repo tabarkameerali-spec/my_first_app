@@ -4,15 +4,18 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
+      groups:
+        - apple_credentials  # هذا السطر يربط الملف ببياناتك السرية
     scripts:
-      - name: Set up code signing
+      - name: Initialize Keychain
+        script: keychain initialize
+      - name: Fetch and Install Signing Files
         script: |
-          # هذا الأمر يقوم بجلب الملفات التي أنشأها Codemagic أوتوماتيكياً
-          app-store-connect fetch-signing-files "com.tabark.myfirstapp" --type IOS_APP_STORE
+          app-store-connect fetch-signing-files "com.tabark.myfirstapp" \
+            --type IOS_APP_STORE
           keychain add-certificates
       - name: Build IPA
         script: |
-          # البناء مع التوقيع التلقائي
           flutter build ipa --release --export-options-plist=export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
