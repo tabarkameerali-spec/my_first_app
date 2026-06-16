@@ -5,16 +5,21 @@ workflows:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Get Flutter dependencies
-        script: flutter pub get
+      - name: Setup iOS Environment
+        script: |
+          # تنظيف أي بقايا قديمة
+          flutter clean
+          # إعادة إنشاء هيكلية iOS بما في ذلك ملف Podfile
+          flutter create .
       - name: Install Pods
         script: |
           cd ios
+          # تحديث المستودعات والتثبيت
+          pod repo update
           pod install
       - name: Build IPA
         script: |
-          # هنا لا نحتاج لتحديد --xcode-project أو --scheme
-          # لأن Flutter سيكتشفهم تلقائياً من الهيكلية التي أنشأتها
+          # البناء
           flutter build ipa --release --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa
