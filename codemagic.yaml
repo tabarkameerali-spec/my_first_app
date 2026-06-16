@@ -10,14 +10,11 @@ workflows:
       - name: Install Pods
         script: |
           cd ios
-          pod repo update
           pod install
-          cd ..
       - name: Build IPA
         script: |
-          # بناء التطبيق مع تحديد صريح للمشروع والـ Scheme
-          flutter build ipa --release --no-codesign \
-            --xcode-project="ios/Runner.xcodeproj" \
-            --scheme="Runner"
+          # هنا لا نحتاج لتحديد --xcode-project أو --scheme
+          # لأن Flutter سيكتشفهم تلقائياً من الهيكلية التي أنشأتها
+          flutter build ipa --release --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa
