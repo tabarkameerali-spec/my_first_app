@@ -1,27 +1,18 @@
 workflows:
-  ios-build:
-    name: Build iOS App
+  ios-signing-workflow:
+    name: Build Signed iOS App
     environment:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Setup iOS Environment
+      - name: Set up code signing
         script: |
-          flutter clean
-          flutter pub get
-          flutter create .
-      - name: Ensure Podfile exists and Install
-        script: |
-          cd ios
-          # إذا لم يجد ملف Podfile، يقوم بإنشائه يدوياً
-          if [ ! -f "Podfile" ]; then
-            echo "Podfile not found, initializing..."
-            pod init
-          fi
-          # تثبيت المكتبات
-          pod install
+          # هذا الأمر يقوم بجلب الملفات التي أنشأها Codemagic أوتوماتيكياً
+          app-store-connect fetch-signing-files "YOUR_BUNDLE_ID" --type IOS_APP_STORE
+          keychain add-certificates
       - name: Build IPA
         script: |
-          flutter build ipa --release --no-codesign
+          # البناء مع التوقيع التلقائي
+          flutter build ipa --release --export-options-plist=export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
