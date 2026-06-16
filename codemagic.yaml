@@ -1,31 +1,23 @@
 workflows:
-  ios-workflow:
-    name: iOS Workflow
-    instance_type: mac_mini_m1
+  ios-build:
+    name: Build iOS App
     environment:
       flutter: stable
       xcode: latest
     scripts:
-      - name: "Set up and clean iOS project"
+      - name: Get Flutter dependencies
+        script: flutter pub get
+      - name: Install Pods
         script: |
-          echo "Setting up iOS folder"
           cd ios
-          rm -rf Pods Podfile.lock Runner.xcworkspace
-          if [ ! -f "Podfile" ]; then
-            pod init
-          fi
+          pod repo update
+          pod install
           cd ..
-          flutter clean
-          flutter pub get
-      - name: "Install CocoaPods dependencies"
+      - name: Build IPA
         script: |
-          echo "Installing Pods"
-          cd ios
-          pod install --repo-update
-          cd ..
-      - name: "Build iOS app"
-        script: |
-          echo "Building iOS app"
-          flutter build ios --release --no-codesign
+          # بناء التطبيق مع تحديد صريح للمشروع والـ Scheme
+          flutter build ipa --release --no-codesign \
+            --xcode-project="ios/Runner.xcodeproj" \
+            --scheme="Runner"
     artifacts:
       - build/ios/ipa/*.ipa
