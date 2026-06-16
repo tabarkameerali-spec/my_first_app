@@ -1,21 +1,7 @@
-workflows:
-  ios-signing-workflow:
-    name: Build Signed iOS App
-    environment:
-      flutter: stable
-      xcode: latest
-      groups:
-        - apple_credentials  # هذا السطر يربط الملف ببياناتك السرية
-    scripts:
-      - name: Initialize Keychain
-        script: keychain initialize
-      - name: Fetch and Install Signing Files
+- name: Fetch and Install Signing Files
         script: |
+          # أضفنا --create ليقوم Codemagic بإنشاء الشهادة إذا لم يجدها
           app-store-connect fetch-signing-files "com.tabark.myfirstapp" \
-            --type IOS_APP_STORE
+            --type IOS_APP_STORE \
+            --create
           keychain add-certificates
-      - name: Build IPA
-        script: |
-          flutter build ipa --release --export-options-plist=export_options.plist
-    artifacts:
-      - build/ios/ipa/*.ipa
