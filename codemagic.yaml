@@ -7,19 +7,21 @@ workflows:
     scripts:
       - name: Setup iOS Environment
         script: |
-          # تنظيف أي بقايا قديمة
           flutter clean
-          # إعادة إنشاء هيكلية iOS بما في ذلك ملف Podfile
+          flutter pub get
           flutter create .
-      - name: Install Pods
+      - name: Ensure Podfile exists and Install
         script: |
           cd ios
-          # تحديث المستودعات والتثبيت
-          pod repo update
+          # إذا لم يجد ملف Podfile، يقوم بإنشائه يدوياً
+          if [ ! -f "Podfile" ]; then
+            echo "Podfile not found, initializing..."
+            pod init
+          fi
+          # تثبيت المكتبات
           pod install
       - name: Build IPA
         script: |
-          # البناء
           flutter build ipa --release --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa
